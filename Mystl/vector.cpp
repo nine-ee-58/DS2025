@@ -23,7 +23,7 @@ public:
   // 填充构造函数
   vector(size_type n, const T& value = T()) {
     allocate_and_fill(n, value);
-  }
+  } 
 
   // 拷贝构造函数
   vector(const vector& other) {
