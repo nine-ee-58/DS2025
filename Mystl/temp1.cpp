@@ -4,7 +4,8 @@
 #include<vector>
 #include<algorithm>
 using namespace std;
-vector<int> a;/*
+vector<int> a;
+/*
 void mergetogether(ll left, ll right, ll mid) {
 	vector<int>b1(mid - left + 1);
 	vector<int>b2(right - mid);
