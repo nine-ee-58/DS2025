@@ -45,23 +45,25 @@ void mergetogether(ll left, ll right, ll mid) {
 void mergetogether(ll left, ll right, ll mid) {
 	int k=0;
 	int i=left;
-	int j=right;
-	vector<int>b(mid - left + 1);
+	int j=mid+1;
+	vector<int>b(right - left + 1);
 	while(i<=mid&&j<=right){
-	if(a[i]<=a[j])
-		b[k++]=a[i++]; 
-	else
-		b[k++]=a[j++];
+		if(a[i]<=a[j])
+			b[k++]=a[i++]; 
+		else
+			b[k++]=a[j++];
 	}
 	while(i<=mid)
 		b[k++]=a[i++];
 	while(j<=right)
 		b[k++]=a[j++];
-	for(int i=left,k=0;i<=right;i++)
-		a[i]=b[k++];
+	for(int i=0;i<k;i++)
+		a[left+i]=b[i];
 }
 
 void mergesort(ll left,ll right) {
+	if(left>=right)return;
+
 	ll mid = left + (right - left) / 2;
 	if (right - left > 0) {
 		mergesort(left, mid);
@@ -73,7 +75,6 @@ void mergesort(ll left,ll right) {
 void solve() {
 	int n,k;
 	cin >> n>>k;
-
 	for (int i = 0; i < n; i++) {
 		int s;
 		cin >> s;
@@ -81,6 +82,7 @@ void solve() {
 	}
 	mergesort(0, n - 1);
 	cout << a[k];
+	cout<<"中文呢"<<"\n";
 }
 int main()
 {

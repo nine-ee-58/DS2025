@@ -1,272 +1,373 @@
-#include <iostream>
-#include <vector>
-#include <algorithm>
-#include <random>
-#include <ctime>
-#include <cmath>
-#include <iomanip>
-#include <string>
-class Complex {
+#include<iostream>
+#include<stack>
+#include<string>
+#include<cmath>
+#include<map>
+#include<cctype>
+#include<vector>
+#include<algorithm>
+
+using namespace std;
+class Calculator {
 private:
-    double real;
-    double imag; 
-
+//函数到名称
+  map<string,string> Fun; 
+//支持的函数表
+  vector<string> funs={"sqrt","ln","log","sin",
+                          "cos","tan","asin","acos",
+                          "atan","exp","abs"};
+// 运算符优先级表
+  const char prt[9][9] = {
+    /*              |-------------------- 当 前 运 算 符 --------------------| */
+        /*              +    -    *    /    ^    !    (    )    #  */
+        /* --  + */    '>', '>', '<', '<', '<', '<', '<', '>', '>',
+        /* |   - */    '>', '>', '<', '<', '<', '<', '<', '>', '>',
+        /* 栈  * */    '>', '>', '>', '>', '<', '<', '<', '>', '>',
+        /* 顶  / */    '>', '>', '>', '>', '<', '<', '<', '>', '>',
+        /* 运  ^ */    '>', '>', '>', '>', '>', '<', '<', '>', '>',
+        /* 算  ! */    '>', '>', '>', '>', '>', '>', ' ', '>', '>',
+        /* 符  ( */    '<', '<', '<', '<', '<', '<', '<', '=', ' ',
+        /* |   ) */    ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+        /* --  # */    '<', '<', '<', '<', '<', '<', '<', ' ', '='
+    };
+// 运算符到索引
+  map<char, int> opI = {
+        {'+', 0}, {'-', 1}, {'*', 2}, {'/', 3}, 
+        {'^', 4}, {'!', 5}, {'(', 6}, {')', 7}, 
+        {'#', 8}
+    };
+// 初始化函数
+  void initFuns(){
+      Fun["sqrt"]="计算平方根";
+      Fun["ln"]="自然对数";
+      Fun["log"]="常用对数";
+      Fun["sin"]="正弦函数";
+      Fun["cos"]="余弦函数";
+      Fun["tan"]="正切函数";
+      Fun["asin"]="反正弦函数";
+      Fun["acos"]="反余弦函数";
+      Fun["atan"]="反正切函数";
+      Fun["exp"]="指数函数";
+      Fun["abs"]="绝对值函数";
+    }
+   
 public:
-    // 构造函数
-    Complex(double r = 0.0, double i = 0.0) : real(r), imag(i) {}
-    
-    // 获取实部
-    double getReal() const { return real; }
-    
-    // 获取虚部
-    double getImag() const { return imag; }
-    
-    // 计算模
-    double getModulus() const { return std::sqrt(real * real + imag * imag); }
-    
-    // 重载相等运算符
-    bool operator==(const Complex& other) const {
-        return real == other.real && imag == other.imag;
+
+  Calculator() {
+        initFuns();
     }
-    
-    // 重载小于运算符（按模排序，模相同按实部排序）
-    bool operator<(const Complex& other) const {
-        double mod1 = getModulus();
-        double mod2 = other.getModulus();
-        if (std::abs(mod1 - mod2) < 1e-10) {
-            return real < other.real;
+
+  char ComparePrt(char StackTop, char Current) {
+      if(opI.find(StackTop) != opI.end() && opI.find(Current) != opI.end())
+      { 
+        int row = opI[StackTop];
+        int col = opI[Current];
+        return prt[row][col];
+      }
+      throw runtime_error("未知运算符");
+
+      return ' ';
+    }
+
+  double calculateSimple(double a, char op, double b) {
+      switch (op) {
+          case '+': return a + b;
+          case '-': return a - b;
+          case '*': return a * b;
+          case '/': 
+              if (b == 0) {
+                  throw runtime_error("除数不能为零");
+              }
+              return a / b;
+          case '^': return pow(a, b);
+          default:
+              throw runtime_error("未知运算符");
+      } 
+    }
+
+  double Factorial(double n) {
+      if (n < 0) {
+          throw runtime_error("阶乘函数参数不能为负");
+      }
+      if (n == 0 || n == 1) {
+          return 1;
+      }
+      double result = 1;
+      for (int i = 2; i <= n; ++i) {
+          result *= i;
+      }
+      return result;
+    }
+
+  double calculateFun(const string& func, double value) {
+      if (func == "sqrt") {
+          if (value < 0) {
+              throw runtime_error("平方根函数参数不能为负");
+          }
+          return sqrt(value);
+      }
+      else if (func == "ln") {
+          if (value <= 0) {
+              throw runtime_error("自然对数函数参数必须为正");
+          }
+          return log(value);
+      }
+      else if (func == "log") {
+          if (value <= 0) {
+              throw runtime_error("常用对数函数参数必须为正");
+          }
+          return log10(value);
+      }
+      else if (func == "sin") {
+          return sin(value);
+      }
+      else if (func == "cos") {
+          return cos(value);
+      }
+      else if (func == "tan") {
+          return tan(value);
+      }
+      else if (func == "asin") {
+          if (value < -1 || value > 1) {
+              throw runtime_error("反正弦函数参数必须在[-1,1]范围内");
+          }
+          return asin(value);
+      }
+      else if (func == "acos") {
+          if (value < -1 || value > 1) {
+              throw runtime_error("反余弦函数参数必须在[-1,1]范围内");
+          }
+          return acos(value);
+      }
+      else if (func == "atan") {
+          return atan(value);
+      }
+      else if (func == "exp") {
+          return exp(value);
+      }
+      else if (func == "abs") {
+          return fabs(value);
+      }
+      else {
+          throw runtime_error("未知函数: " + func);
+      }
+    }
+
+  bool isF(const string& func) {
+      return find(funs.begin(),funs.end(),func)!=funs.end();
+    }
+
+  bool isO(char c) {
+         return string("+-*/^!()#").find(c) != string::npos;
+    }
+
+  string getFunc(const string& expr, size_t& pos) {
+        string func;
+        while (pos < expr.length() && isalpha(expr[pos])) {
+            func += expr[pos];
+            pos++;
         }
-        return mod1 < mod2;
+        return func;
     }
-    
-    // 重载输出运算符
-    friend std::ostream& operator<<(std::ostream& os, const Complex& c) {
-        os << "(" << c.real;
-        if (c.imag >= 0)
-            os << "+" << c.imag << "i)";
-        else
-            os << c.imag << "i)";
-        return os;
-    }
-};
 
-// 置乱函数
-void shuffleVector(std::vector<Complex>& vec) {
-    std::random_device rd;
-    std::mt19937 g(rd());
-    std::shuffle(vec.begin(), vec.end(), g);
-}
-
-// 查找函数（实部和虚部均相同）
-int findComplex(const std::vector<Complex>& vec, const Complex& target) {
-    for (size_t i = 0; i < vec.size(); ++i) {
-        if (vec[i] == target) {
-            return static_cast<int>(i);
+  string getNumber(const string& expr, size_t& pos) {
+        string numStr;
+        bool hasDecimal = false;
+        bool hasExponent = false;
+        
+        // 处理负号
+        if (expr[pos] == '-' && (pos == 0 || isO(expr[pos-1]) || expr[pos-1] == 'e' || expr[pos-1] == 'E')) {
+            numStr += expr[pos++];
         }
+        
+        while (pos < expr.length()) {
+            char c = expr[pos];
+            
+            if (isdigit(c)) {
+                numStr += c;
+            }
+            else if (c == '.' && !hasDecimal) {
+                numStr += c;
+                hasDecimal = true;
+            }
+            else if ((c == 'e' || c == 'E') && !hasExponent) {
+                numStr += c;
+                hasExponent = true;
+                // 处理指数符号
+                if (pos + 1 < expr.length() && (expr[pos + 1] == '+' || expr[pos + 1] == '-')) {
+                    numStr += expr[++pos];
+                }
+            }
+            else {
+                break;
+            }
+            pos++;
+        }
+        
+        return numStr;
     }
-    return -1;
-}
 
-// 唯一化函数
-void uniqueVector(std::vector<Complex>& vec) {
-    auto it = std::unique(vec.begin(), vec.end());
-    vec.erase(it, vec.end());
-}
+  double DealFunc(const string& expr, size_t& pos) {
+      if(pos >= expr.length() || expr[pos] != '(') {
+          throw runtime_error("函数后必须跟左括号");
+      }
+      pos++;
+      string paramExpr;
+      int bcont=1;
+      while(pos < expr.length() && bcont > 0) {
+          if(expr[pos] == '(') bcont++;
+          else if(expr[pos] == ')') bcont--;
+          
+          if(bcont > 0) {
+              paramExpr += expr[pos];
+          }
+          pos++;
+      }
+      if(bcont != 0) {
+          throw runtime_error("函数参数括号不匹配");
+    }
+      return Evaluate(paramExpr+"#");
+  }
 
-// 起泡排序
-void bubbleSort(std::vector<Complex>& vec) {
-    for (size_t i = 0; i < vec.size() - 1; ++i) {
-        for (size_t j = 0; j < vec.size() - i - 1; ++j) {
-            if (!(vec[j] < vec[j + 1])) {
-                std::swap(vec[j], vec[j + 1]);
+  double Evaluate(const string& expression) {
+        stack<char> opStack;    // 运算符栈
+        stack<double> numStack;   // 操作数栈
+        stack<string> funcStack;  // 函数栈
+        
+        // 添加结束符
+        string expr = expression + "#";
+        
+        opStack.push('#');
+        
+        size_t i = 0;
+        while (i < expr.length()&&(expr[i]!='#'||opStack.top()!='#' )) {
+            if (isspace(expr[i])) {
+                i++;
+                continue;
+            }
+            // 函数处理
+            if (isalpha(expr[i])) {
+                size_t start = i;
+                string func = getFunc(expr, i);
+                
+                if (isF(func)) {
+                    cout << "读取函数: " << func << " [" << Fun[func] << "]" << endl;
+                    double param = DealFunc(expr, i);
+                    double result = calculateFun(func, param);
+                    numStack.push(result);
+                    cout << "计算函数: " << func << "(" << param << ") = " << result << endl;
+                    continue;
+                } else {
+                    // 如果不是函数，回退报错
+                    i = start;
+                    throw runtime_error("未知函数: " + func);
+                }
+            }
+            
+            // 数字处理
+            if (isdigit(expr[i]) || expr[i] == '.' || (expr[i] == '-' && (i == 0 || isO(expr[i-1])))) {
+                string numStr = getNumber(expr, i);
+                try {
+                    double num = stod(numStr);
+                    numStack.push(num);
+                    cout << "读取数字: " << num << endl;
+                } catch (const exception& e) {
+                    throw runtime_error("数字格式错误: " + numStr);
+                }
+                continue;
+            }
+            
+            // 处理运算符
+            if (isO(expr[i])) {
+                char currentOp = expr[i];
+                char stackTop = opStack.top();
+                char relation = ComparePrt(stackTop, currentOp);  
+                cout  << "栈顶: " << stackTop << ", 当前: " << currentOp 
+                     << ", 关系: " << relation << endl;
+                switch(relation) {
+                    case '<':
+                        opStack.push(currentOp);
+                        i++;
+                        break;
+                    case '=':
+                        opStack.pop();
+                        i++;
+                        break;
+                    case '>': {
+                        char op = opStack.top();
+                        opStack.pop();
+                        
+                        if(op == '!') {
+                            // 阶乘运算（单目运算符）
+                            if (numStack.empty()) {
+                                throw runtime_error("阶乘运算缺少操作数");
+                            }
+                            double a = numStack.top();
+                            numStack.pop();
+                            double result = Factorial(a);
+                            numStack.push(result);
+                            
+                            cout << "计算: " << a << "! = " << result << endl;
+                        } 
+                          else {
+
+                            if(numStack.size() < 2) {
+                                throw runtime_error("操作数不足");
+                            }
+
+                          double b = numStack.top(); numStack.pop();
+                          double a = numStack.top(); numStack.pop();
+                          double result = calculateSimple(a, op, b);  
+              
+                          numStack.push(result);
+                          cout << "计算: " << a << " " << op << " " << b 
+                             << " = " << result << endl;
+                        }
+                        break;
+                    }
+                    case ' ':
+                    default:
+                      throw runtime_error("表达式语法错误: 无效的运算符组合 " + 
+                                          string(1, stackTop) + " 和 " + string(1, currentOp)); 
+                }
+          } else {
+            throw runtime_error("未知字符: " + string(1, expr[i]));
+          }
+          
+        }
+
+        if (numStack.size() != 1 || opStack.top() != '#') {
+            throw runtime_error("表达式不完整或格式错误");
+        
+        }
+      
+        return numStack.top();
+
+    }
+
+  void ActivateEvaluator() {
+        string input;
+        while (true) {
+            cout << "请输入表达式 (输入 'quit' 退出): ";
+            getline(cin, input);
+            if (input == "quit" || input == "exit") {
+                break;
+            }
+            if (input.empty()) {
+                continue;
+            }
+            try {
+                double result = Evaluate(input);
+                cout << ">>> 结果: " << result << endl << endl;
+            } catch (const exception& e) {
+                cout << ">>> 错误: " << e.what() << endl << endl;
             }
         }
-    }
-}
-
-// 归并排序的合并函数
-void merge(std::vector<Complex>& vec, int left, int mid, int right) {
-    int n1 = mid - left + 1;
-    int n2 = right - mid;
-    
-    std::vector<Complex> L(n1), R(n2);
-    
-    for (int i = 0; i < n1; ++i)
-        L[i] = vec[left + i];
-    for (int j = 0; j < n2; ++j)
-        R[j] = vec[mid + 1 + j];
-    
-    int i = 0, j = 0, k = left;
-    while (i < n1 && j < n2) {
-        if (L[i] < R[j]) {
-            vec[k] = L[i];
-            ++i;
-        } else {
-            vec[k] = R[j];
-            ++j;
-        }
-        ++k;
-    }
-    
-    while (i < n1) {
-        vec[k] = L[i];
-        ++i;
-        ++k;
-    }
-    
-    while (j < n2) {
-        vec[k] = R[j];
-        ++j;
-        ++k;
-    }
-}
-
-// 归并排序
-void mergeSort(std::vector<Complex>& vec, int left, int right) {
-    if (left >= right) return;
-    
-    int mid = left + (right - left) / 2;
-    mergeSort(vec, left, mid);
-    mergeSort(vec, mid + 1, right);
-    merge(vec, left, mid, right);
-}
-
-void mergeSort(std::vector<Complex>& vec) {
-    if (vec.empty()) return;
-    mergeSort(vec, 0, vec.size() - 1);
-}
-
-// 区间查找函数
-std::vector<Complex> rangeSearch(const std::vector<Complex>& vec, double m1, double m2) {
-    std::vector<Complex> result;
-    for (const auto& c : vec) {
-        double mod = c.getModulus();
-        if (mod >= m1 && mod < m2) {
-            result.push_back(c);
-        }
-    }
-    return result;
-}
-
-// 生成随机复数向量
-std::vector<Complex> generateRandomComplexVector(int size) {
-    std::vector<Complex> vec;
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<> dis(-10.0, 10.0);
-    
-    for (int i = 0; i < size; ++i) {
-        vec.emplace_back(dis(gen), dis(gen));
-    }
-    return vec;
-}
-
-// 打印向量
-void printVector(const std::vector<Complex>& vec, const std::string& title = "") {
-    if (!title.empty()) {
-        std::cout << title << ":" << std::endl;
-    }
-    for (size_t i = 0; i < vec.size(); ++i) {
-        std::cout << vec[i];
-        if (i < vec.size() - 1) std::cout << ", ";
-        if ((i + 1) % 5 == 0) std::cout << std::endl;
-    }
-    std::cout << std::endl << std::endl;
-}
+      }
+};
 
 int main() {
-    // 1. 生成随机复数向量
-    std::vector<Complex> vec = generateRandomComplexVector(20);
-    printVector(vec);
-    std::cout<<"随机复数向量生成完毕"<<"\n";
-    
-    // (1) 测试各种操作
-    std::cout << "=== 测aaaa操作 ===" << std::endl;
-    
-    // 置乱
-    shuffleVector(vec);
-    printVector(vec, "置乱后的向量");
-    
-    // 查找
-    Complex target = vec[3]; // 取第4个元素作为查找目标
-    int index = findComplex(vec, target);
-    std::cout << "查找 " << target << " 的位置: " << index << std::endl << std::endl;
-    
-    // 插入
-    Complex newComplex(7.5, -3.2);
-    vec.insert(vec.begin() + 2, newComplex);
-    printVector(vec, "在位置2插入(7.5-3.2i)后的向量");
-    
-    // 删除
-    vec.erase(vec.begin() + 5);
-    printVector(vec, "删除位置5元素后的向量");
-    
-    // 唯一化（先添加一些重复元素）
-    vec.push_back(vec[0]);
-    vec.push_back(vec[1]);
-    printVector(vec, "添加重复元素后的向量");
-    uniqueVector(vec);
-    printVector(vec, "唯一化后的向量");
-     std::vector<Complex> largeVec = generateRandomComplexVector(5000);
-    // (2) 排序效率比较
-    std::cout << "=== 排序效率比较 ===" << std::endl;
-    
-    // 准备三种情况的向量
-    std::vector<Complex> sortedVec = largeVec;
-    std::sort(sortedVec.begin(), sortedVec.end());
-    
-    std::vector<Complex> reverseVec = sortedVec;
-    std::reverse(reverseVec.begin(), reverseVec.end());
-    
-    std::vector<Complex> randomVec = vec;
-    shuffleVector(randomVec);
-    
-    // 测试起泡排序
-    auto testBubbleSort = [](std::vector<Complex> vec, const std::string& type) {
-        clock_t start = clock();
-        bubbleSort(vec);
-        clock_t end = clock();
-        double duration = double(end - start) / CLOCKS_PER_SEC * 1000.0;
-        std::cout << "起泡排序(" << type << "): " << std::fixed << std::setprecision(15) 
-                  << duration << " ms" << std::endl;
-    };
-    
-    // 测试归并排序
-    auto testMergeSort = [](std::vector<Complex> vec, const std::string& type) {
-        clock_t start = clock();
-        mergeSort(vec);
-        clock_t end = clock();
-        double duration = double(end - start) / CLOCKS_PER_SEC * 1000.0;
-        std::cout << "归并排序(" << type << "): " << std::fixed << std::setprecision(15) 
-                  << duration << " ms" << std::endl;
-    };
-    
-    testBubbleSort(sortedVec, "顺序");
-    testBubbleSort(randomVec, "乱序");
-    testBubbleSort(reverseVec, "逆序");
-    std::cout << std::endl;
-    testMergeSort(sortedVec, "顺序");
-    testMergeSort(randomVec, "乱序");
-    testMergeSort(reverseVec, "逆序");
-    std::cout << std::endl;
-    
-    // (3) 区间查找
-    std::cout << "=== 区间查找 ===" << std::endl;
-    
-    // 先对向量排序
-    mergeSort(vec);
-    printVector(vec, "排序后的向量（用于区间查找）");
-    
-    double m1 = 5.0, m2 = 10.0;
-    std::vector<Complex> rangeResult = rangeSearch(vec, m1, m2);
-    printVector(rangeResult, "模在[" + std::to_string(m1) + ", " + std::to_string(m2) + ")范围内的复数");
-    
-    // 显示模值
-    std::cout << "对应的模值: ";
-    for (const auto& c : rangeResult) {
-        std::cout << std::fixed << std::setprecision(2) << c.getModulus() << " ";
-    }
-    std::cout << std::endl;
-    
+    Calculator calculator;
+    calculator.ActivateEvaluator();
     return 0;
 }

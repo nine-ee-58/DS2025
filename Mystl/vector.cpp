@@ -1,3 +1,4 @@
+#define ll long long
 #include <initializer_list>
 #include <stdexcept>
 #include <algorithm>
@@ -112,6 +113,16 @@ public:
       reallocate(new_cap);
     }
   }
+  
+  // 随机打乱元素顺序 1.0
+  template <typename T> void permute(vector<T>& vec)
+  {
+    for (int i = vec.size(); i  > 0; i--)
+    {
+      swap(vec[i-1],vec[rand()%i]);
+    }
+  }
+
 
   // 调整大小
   void resize(size_type count, const T& value = T()) {
@@ -153,6 +164,38 @@ public:
     for (size_type i = 0; i < size_; ++i)
       data_[i].~T();
     size_ = 0;
+  }
+
+  // 归并排序  合并
+  template <typename T>
+  void mergetogether(ll left, ll right, ll mid) {
+	  int k=0;
+	  int i=left;
+	  int j=mid+1;
+	  vector<int>b(right - left + 1);
+	  while(i<=mid&&j<=right){
+	  	if(a[i]<=a[j])
+	  		b[k++]=a[i++]; 
+	  	else
+	  		b[k++]=a[j++];
+  	}
+	  while(i<=mid)
+  		b[k++]=a[i++];
+  	while(j<=right)
+  		b[k++]=a[j++];
+  	for(int i=0;i<k;i++)
+  		a[left+i]=b[i];
+  }
+  // 归并排序  递归
+  void mergesort(ll left,ll right) {
+  	if(left>=right)return;
+
+  	ll mid = left + (right - left) / 2;
+	  if (right - left > 0) {
+  		mergesort(left, mid);
+  		mergesort(mid + 1, right);
+  	}
+  	mergetogether(left, right, mid);
   }
 
 private:
