@@ -14,15 +14,10 @@ using namespace std;
 vector<int> a(100005);
 int creatn()
 {
-  random_device rd;
-  mt19937 gen(rd());
-  uniform_int_distribution<int> lendist(1,100000);
-  int n=lendist(gen);
-  uniform_int_distribution<int> valdist(0,10000);
-  for(int i=1;i<=n;i++)
-  {
-    a[i]=valdist(gen);
-  }
+    int n = rand() % 100000 + 1; 
+    for (int i = 1; i <= n; i++) {
+        a[i] = rand() % 10001; 
+    }
   return n;
 }
 void solve(int x)
@@ -71,8 +66,13 @@ void solve(int x)
 }
 int main()
 {
-
+  srand(time(0)); 
   int n;
-  n=creatn();
-  solve(n);
+  for(int i=1;i<=10;i++)
+  {
+    cout<<"Test Case "<<i<<": ";
+    n=creatn();
+    solve(n);
+    cout<<"\n";
+  }
 }
