@@ -230,11 +230,10 @@ public:
   }
 
   double Evaluate(const string& expression) {
-        stack<char> opStack;    // 运算符栈
-        stack<double> numStack;   // 操作数栈
+        stack<char> opStack;    // 运算栈
+        stack<double> numStack;   // 数栈
         stack<string> funcStack;  // 函数栈
         
-        // 添加结束符
         string expr = expression + "#";
         
         opStack.push('#');
@@ -251,11 +250,11 @@ public:
                 string func = getFunc(expr, i);
                 
                 if (isF(func)) {
-                    cout << "读取函数: " << func << " [" << Fun[func] << "]" << endl;
+                    //cout << "读取函数: " << func << " [" << Fun[func] << "]" << endl;
                     double param = DealFunc(expr, i);
                     double result = calculateFun(func, param);
                     numStack.push(result);
-                    cout << "计算函数: " << func << "(" << param << ") = " << result << endl;
+                    //cout << "计算函数: " << func << "(" << param << ") = " << result << endl;
                     continue;
                 } else {
                     // 如果不是函数，回退报错
@@ -270,7 +269,7 @@ public:
                 try {
                     double num = stod(numStr);
                     numStack.push(num);
-                    cout << "读取数字: " << num << endl;
+                    //cout << "读取数字: " << num << endl;
                 } catch (const exception& e) {
                     throw runtime_error("数字格式错误: " + numStr);
                 }
@@ -282,8 +281,7 @@ public:
                 char currentOp = expr[i];
                 char stackTop = opStack.top();
                 char relation = ComparePrt(stackTop, currentOp);  
-                cout  << "栈顶: " << stackTop << ", 当前: " << currentOp 
-                     << ", 关系: " << relation << endl;
+                //cout  << "栈顶: " << stackTop << ", 当前: " << currentOp << ", 关系: " << relation << endl;
                 switch(relation) {
                     case '<':
                         opStack.push(currentOp);
@@ -307,7 +305,7 @@ public:
                             double result = Factorial(a);
                             numStack.push(result);
                             
-                            cout << "计算: " << a << "! = " << result << endl;
+                           // cout << "计算: " << a << "! = " << result << endl;
                         } 
                           else {
 
@@ -320,8 +318,7 @@ public:
                           double result = calculateSimple(a, op, b);  
               
                           numStack.push(result);
-                          cout << "计算: " << a << " " << op << " " << b 
-                             << " = " << result << endl;
+                          //cout << "计算: " << a << " " << op << " " << b << " = " << result << endl;
                         }
                         break;
                     }

@@ -207,22 +207,27 @@ void bubleSort(vector<Compelex>& a)
       }
   }
 
-void qsort(vector<Compelex>& a, int left, int right) {
-    if (left >= right) return;
-
-    Compelex pivot = a[left];
-    int i = left, j = right;
-
-    while (i < j) {
-        while (i < j && a[j] >= pivot) j--;
-        if (i < j) a[i++] = a[j];
-        while (i < j && a[i] <= pivot) i++;
-        if (i < j) a[j--] = a[i];
+int Partition(vector<Compelex>& a, int left, int right) {
+    Compelex pivot = a[right];
+    int i = left - 1;
+    for (int j = left; j < right; j++) {
+        if (a[j] <= pivot) {
+            i++;
+            swap(a[i], a[j]);
+        }
     }
-    a[i] = pivot;
-    qsort(a, left, i - 1);
-    qsort(a, i + 1, right);
+    swap(a[i + 1], a[right]);
+    return i + 1;
 }
+
+void qsort(vector<Compelex>& a, int left, int right) {
+    if(left < right) {
+        int mid = Partition(a, left, right);
+        qsort(a, left, mid - 1);
+        qsort(a, mid + 1, right);
+    }
+}
+
 int main()
 {
     vector<Compelex> v;
@@ -282,7 +287,7 @@ int main()
     cout<<endl;
 
 
-    vector<Compelex> v2=randomComplexVector(5000);
+    vector<Compelex> v2=randomComplexVector(10000);
 
     cout<<"排序效率比较"<<endl;
     vector<Compelex> sortv1=v2;
