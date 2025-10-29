@@ -57,6 +57,47 @@ public:
         initFuns();
     }
 
+  string getNumber(const string& expr, size_t& pos) {
+        string numStr;
+        bool hasDecimal = false;
+        bool hasExponent = false;
+        
+        // 处理负号
+        if (expr[pos] == '-' && (pos == 0 || isO(expr[pos-1]) || expr[pos-1] == 'e' || expr[pos-1] == 'E')) {
+            numStr += expr[pos++];
+        }
+        
+        while (pos < expr.length()) {
+            char c = expr[pos];
+            
+            if (isdigit(c)) {
+                numStr += c;
+            }
+            else if (c == '.' && !hasDecimal) {
+                numStr += c;
+                hasDecimal = true;
+            }
+            else if ((c == 'e' || c == 'E') && !hasExponent) {
+                numStr += c;
+                hasExponent = true;
+                // 处理指数符号
+                if (pos + 1 < expr.length() && (expr[pos + 1] == '+' || expr[pos + 1] == '-')) {
+                    numStr += expr[++pos];
+                }
+            }
+            else {
+                break;
+            }
+            pos++;
+        }
+        
+        return numStr;
+    }
+
+  bool isO(char c) {
+         return string("+-*/^!()#").find(c) != string::npos;
+    }
+
   char ComparePrt(char StackTop, char Current) {
       if(opI.find(StackTop) != opI.end() && opI.find(Current) != opI.end())
       { 
@@ -97,6 +138,19 @@ public:
           result *= i;
       }
       return result;
+    }
+
+  string getFunc(const string& expr, size_t& pos) {
+        string func;
+        while (pos < expr.length() && isalpha(expr[pos])) {
+            func += expr[pos];
+            pos++;
+        }
+        return func;
+    }
+
+  bool isF(const string& func) {
+      return find(funs.begin(),funs.end(),func)!=funs.end();
     }
 
   double calculateFun(const string& func, double value) {
@@ -151,60 +205,6 @@ public:
       else {
           throw runtime_error("未知函数: " + func);
       }
-    }
-
-  bool isF(const string& func) {
-      return find(funs.begin(),funs.end(),func)!=funs.end();
-    }
-
-  bool isO(char c) {
-         return string("+-*/^!()#").find(c) != string::npos;
-    }
-
-  string getFunc(const string& expr, size_t& pos) {
-        string func;
-        while (pos < expr.length() && isalpha(expr[pos])) {
-            func += expr[pos];
-            pos++;
-        }
-        return func;
-    }
-
-  string getNumber(const string& expr, size_t& pos) {
-        string numStr;
-        bool hasDecimal = false;
-        bool hasExponent = false;
-        
-        // 处理负号
-        if (expr[pos] == '-' && (pos == 0 || isO(expr[pos-1]) || expr[pos-1] == 'e' || expr[pos-1] == 'E')) {
-            numStr += expr[pos++];
-        }
-        
-        while (pos < expr.length()) {
-            char c = expr[pos];
-            
-            if (isdigit(c)) {
-                numStr += c;
-            }
-            else if (c == '.' && !hasDecimal) {
-                numStr += c;
-                hasDecimal = true;
-            }
-            else if ((c == 'e' || c == 'E') && !hasExponent) {
-                numStr += c;
-                hasExponent = true;
-                // 处理指数符号
-                if (pos + 1 < expr.length() && (expr[pos + 1] == '+' || expr[pos + 1] == '-')) {
-                    numStr += expr[++pos];
-                }
-            }
-            else {
-                break;
-            }
-            pos++;
-        }
-        
-        return numStr;
     }
 
   double DealFunc(const string& expr, size_t& pos) {
@@ -365,6 +365,20 @@ public:
 
 int main() {
     Calculator calculator;
-    calculator.ActivateEvaluator();
+    //calculator.ActivateEvaluator();
+    string ins[5]={
+        "3+5*2",
+        "sqrt(16)+log(100)",
+        "5! + 3^2",
+        "sin(3.14159/2) + cos(0)",
+        "ln(exp(1)) + abs(-5)"
+    };
+    string input="3+5*2";
+    double result;
+    for(int i=0;i<5;i++){
+        input=ins[i];
+        result=calculator.Evaluate(input);
+        cout<<"表达式: "<<input<<" = "<<result<<endl;
+    }
     return 0;
 }

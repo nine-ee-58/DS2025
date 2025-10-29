@@ -116,6 +116,7 @@ public:
         else
             cout<< im << "i"<<"\n";
   }
+  // 打印模长
   void printModle()
   {
       cout<<modle;
@@ -131,7 +132,6 @@ void permutecomplex(vector<Compelex>& vec)
       swap(vec[i-1],vec[rand()%i]);
     }
   }
-
 //生成随机复数向量
 vector<Compelex> randomComplexVector(int n)
 {
@@ -146,7 +146,6 @@ vector<Compelex> randomComplexVector(int n)
     }
     return v;
 }
-
 //区间查找函数
 vector<Compelex> searchComplex(vector<Compelex> a,double m1,double m2)
 {
@@ -160,7 +159,6 @@ vector<Compelex> searchComplex(vector<Compelex> a,double m1,double m2)
     }
     return res;
 }
-
 //归并排序
 void mergetogether(vector<Compelex>& a , ll left , ll right , ll mid) {
   int k=0;
