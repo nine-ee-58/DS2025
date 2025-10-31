@@ -150,13 +150,12 @@ vector<Compelex> randomComplexVector(int n)
 vector<Compelex> searchComplex(vector<Compelex> a,double m1,double m2)
 {
     vector<Compelex> res;
-    bool f=(a[0] < a[2] ^ m1 < m2);
-    auto low=lower_bound(a.begin(),a.end(),Compelex(m1,0));
-    auto up=upper_bound(a.begin(),a.end(),Compelex(m2,0));
-    for(auto it=low;it!=up;it++)
-    {
-        res.push_back(*it);
-    }
+    auto comp = [](const Compelex& c, double mod) {
+        return c.modle < mod;
+    };
+    auto low=lower_bound(a.begin(),a.end(),m1,comp);
+    auto up=lower_bound(a.begin(),a.end(),m2,comp);
+    res.insert(res.end(), low, up);
     return res;
 }
 //归并排序
@@ -184,7 +183,7 @@ void mergesort(vector<Compelex>& a,ll left,ll right) {
 
   	ll mid = left + (right - left) / 2;
 	  if (right - left > 0) {
-  		mergesort(a,left, mid);
+        mergesort(a,left, mid);
   		mergesort(a,mid + 1, right);
   	}
   	mergetogether(a,left, right, mid);
@@ -250,9 +249,9 @@ int main()
     int loc=find(v.begin(),v.end(),target)-v.begin();
     cout<<"查找 "<<target<<" 的位置: "<<loc<<endl;
 
-    Compelex a=Compelex(7.5,-3.2);
+    Compelex a=Compelex(75,-32);
     v.insert(v.begin()+2,a);
-    cout<<"在位置2插入(7.5,-3.2)后的列表:"<<endl;
+    cout<<"在位置2插入(75,32)后的列表:"<<endl;
     for(int i=0;i<v.size();i++)
     {
       v[i].print();
@@ -268,7 +267,7 @@ int main()
     cout<<endl;
 
     v.erase(v.begin()+2);
-    cout<<"删除位置2元素(7.5,-3.2)后的向量:"<<endl;
+    cout<<"删除位置2元素(75,-32)后的向量:"<<endl;
     for(int i=0;i<v.size();i++)
     {
         v[i].print();
@@ -284,6 +283,7 @@ int main()
     }
     cout<<endl;
 
+    sort(v.begin(),v.end());
 
     vector<Compelex> v2=randomComplexVector(10000);
 

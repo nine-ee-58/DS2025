@@ -100,15 +100,15 @@ public:
 vector<Compelex> searchComplex(vector<Compelex> a,double m1,double m2)
 {
     vector<Compelex> res;
-    bool f=(a[0] < a[2] ^ m1 < m2);
-    auto low=lower_bound(a.begin(),a.end(),Compelex(m1,0));
-    auto up=upper_bound(a.begin(),a.end(),Compelex(m2,0));
-    for(auto it=low;it!=up;it++)
-    {
-        res.push_back(*it);
-    }
+    auto comp = [](const Compelex& c, double mod) {
+        return c.modle < mod;
+    };
+    auto low=lower_bound(a.begin(),a.end(),m1,comp);
+    auto up=lower_bound(a.begin(),a.end(),m2,comp);
+    res.insert(res.end(), low, up);
     return res;
 }
+
 void mergetogether(vector<Compelex>& a , ll left , ll right , ll mid) {
   int k=0;
   int i=left;
@@ -155,18 +155,16 @@ void mergetogether(vector<Compelex>& a , ll left , ll right , ll mid) {
 int main()
 {
   vector<Compelex> v;
-  v.push_back(Compelex(1,1));
+  v.push_back(Compelex(6,0));
+  v.push_back(Compelex(0,4));
   v.push_back(Compelex(4,4));
-  v.push_back(Compelex(6,6));
-  v.push_back(Compelex(7,7));
-  v.push_back(Compelex(9,9));
-  v.push_back(Compelex(4,3));
+  v.push_back(Compelex(0,6));
+  v.push_back(Compelex(0,4));
+  v.push_back(Compelex(4,0));
   v.push_back(Compelex(2,2));
-  v.push_back(Compelex(8,8));
-  v.push_back(Compelex(8,8));
   v.push_back(Compelex(3,3));
-  v.push_back(Compelex(5,5));
-  v.push_back(Compelex(3,4));
+  v.push_back(Compelex(0,5));
+  v.push_back(Compelex(10,0));
   for(int i=0;i<v.size();i++)
   {
       v[i].print();
@@ -178,12 +176,6 @@ int main()
   {
       v[i].print();
   }
-  reverse(v.begin(),v.end());
-  cout<<"逆序后的向量:"<<endl;
-  for(int i=0;i<v.size();i++)
-  {
-      v[i].print();
-  }
   auto it =unique(v.begin(),v.end());
   v.erase(it,v.end());
   cout<<"唯一化后的向量:"<<endl;
@@ -191,7 +183,7 @@ int main()
   {
       v[i].print();
   }
-  vector<Compelex> res=searchComplex(v,4.0,10.0);
+  vector<Compelex> res=searchComplex(v,4.0,6.0);
   cout<<"区间查找结果:"<<endl;  
   for(int i=0;i<res.size();i++)
   {
