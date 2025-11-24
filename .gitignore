@@ -4,4 +4,20 @@ DS2025.code-workspace
 *.out
 
 .vscode/
-.Drafts/
+
+# 忽略所有.md文件
+*.md
+
+# 忽略Drafts目录
+Drafts/
+
+# 只跟踪特定目录中的.cpp文件
+# 忽略其他所有文件和文件夹
+*
+!Mystl/
+!Mystl/*.cpp
+!exp2/
+!exp2/*.cpp
+!Exps/
+!Exps/exp*/**
+!Exps/exp*/*.cpp
