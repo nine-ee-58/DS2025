@@ -323,30 +323,28 @@ class HuffCode {
 
 int main() {
   // 马丁·路德·金的演讲《I have a dream》的一部分
-  string speech = "I have a dream that one day this nation will rise up and live out the "
-                  "true meaning of its creed "
-                  "We hold these truths to be self-evident that all men are created equal "
-                  "I have a dream that one "
-                  "day on the red hills of Georgia the sons of former slaves and the sons "
-                  "of former slave owners "
-                  "will be able to sit down together at the table of brotherhood I have a "
-                  "dream that one day even "
-                  "the state of Mississippi a state sweltering with the heat of injustice "
-                  "sweltering with the heat "
-                  "of oppression will be transformed into an oasis of freedom and justice ";
-                  
-  cout << "原始文本: " << speech << endl << endl;
+  string speech =
+      "I have a dream that one day this nation will rise up and live out the true meaning of its creed: We hold these truths to be self-evident: that all men "
+      "are created equal. I have a dream that one day on the red hills of Georgia the sons of former slaves and the sons of former slaveowners will be able to "
+      "sit down together at a table of brotherhood. I have a dream that one day even the state of Mississippi, a state sweltering with the heat of injustice, "
+      "sweltering with the heat of oppression, will be transformed into an oasis of freedom and justice. I have a dream that my four little children will one "
+      "day live in a nation where they will not be judged by the color of their skin but by the content of their character. I have a dream today. I have a "
+      "dream that one day the state of Alabama, whose governor's lips are presently dripping with the words of interposition and nullification, will be "
+      "transformed into a situation where little black boys and black girls will be able to join hands with little white boys and white girls and walk "
+      "together as sisters and brothers. I have a dream today. I have a dream that one day every valley shall be exalted, every hill and mountain shall be "
+      "made low, the rough places will be made plain, and the crooked places will be made straight, and the glory of the Lord shall be revealed, and all flesh "
+      "shall see it together. This is our hope. This is the faith that I have to go back to the South with. With this faith we will be able to hew out of the "
+      "mountain of despair a stone of hope. With this faith we will be able to transform the jangling discords of our nation into a beautiful symphony of "
+      "brotherhood. With this faith we will be able to work together, to pray together, to struggle together, to go to jail together, to stand up for freedom "
+      "together, knowing that we will be free one day.zzz";
+
   // 创建哈夫曼树
   HuffTree huffTree;
   huffTree.buildHuffmanTree(speech);
-  cout << "哈夫曼树构建完成！" << endl;
   cout << "树的高度: " << huffTree.height() << endl << endl;
   // 显示哈夫曼编码表
   map<char, string> codes = huffTree.getCodes();
-  cout << "字符频率统计:" << endl;
-  for (auto &pair : huffTree.getFreq()) {
-    cout << "'" << pair.first << "': " << pair.second << " 次" << endl;
-  }
+
   cout << endl;
   cout << "哈夫曼编码表:" << endl;
   for (auto &pair : codes) {
@@ -368,38 +366,11 @@ int main() {
   }
   cout << endl;
   // 对整个文本进行编码
-  string encodedText = huffTree.encode(speech);
-  cout << "编码后的文本（部分）:" << endl;
-  // 只显示前200个字符
-  if (encodedText.length() > 200) {
-    cout << encodedText.substr(0, 200) << "..." << endl;
-  } else {
-    cout << encodedText << endl;
-  }
-  cout << endl;
-  // 演示解码过程
-  string decodedText = huffTree.decode(encodedText);
-  cout << "解码后的文本（部分）:" << endl;
-  if (decodedText.length() > 100) {
-    cout << decodedText.substr(0, 100) << "..." << endl;
-  } else {
-    cout << decodedText << endl;
-  }
-  cout << endl;
-  // 演示HuffCode类的使用
-  cout << "演示HuffCode类功能:" << endl;
+
   HuffCode huffCode(codes['a']);
   cout << "字符'a'的编码: " << huffCode << endl;
   cout << "编码长度: " << huffCode.length() << endl;
-  if (huffCode.getBitmap()) {
-    char *bitStr = huffCode.getBitmap()->bits2string(huffCode.length());
-    cout << "位图表示: " << bitStr << endl;
-    delete[] bitStr;
-  }
-  cout << endl;
-  // 显示哈夫曼树结构（简化版）
-  cout << "哈夫曼树结构（部分）:" << endl;
-  huffTree.printTree();
+
   return 0;
 }
 
