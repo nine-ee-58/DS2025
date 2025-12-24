@@ -19,5 +19,9 @@ Drafts/
 !exp2/
 !exp2/*.cpp
 !Exps/
-!Exps/exp*/**
-!Exps/exp*/*.cpp
+!exp3/
+!exp3/*.cpp
+!exp4/
+!exp4/*.cpp
+
+

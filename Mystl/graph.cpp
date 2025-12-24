@@ -50,9 +50,9 @@ public:
     // 打印图
     void printGraph() const {
         for (int i = 0; i < vertices; ++i) {
-            std::cout << "顶点 " << i << " 的邻接表: ";
+            std::cout << "顶点 " << char(i + 'A') << " 的邻接表: ";
             for (const auto& edge : adj[i]) {
-                std::cout << "(" << edge.to << "," << edge.weight << ") ";
+                std::cout << "(" << char(edge.to + 'A') << "," << edge.weight << ") ";
             }
             std::cout << std::endl;
         }
