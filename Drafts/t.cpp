@@ -31,9 +31,12 @@ int swap2(int a, int b) {
   b = temp;
   return 0;
 }
+//[INFO][TODO]
+//TODO JUST A TEST
+
 int main() {
   int j;
-  for (int i = 1; i <= 8; i++) {
+  for (int i = 1; i <= 8; i++) {//[INFO]
     j += i;
   }
   cout << "Hello, World!" << endl;
